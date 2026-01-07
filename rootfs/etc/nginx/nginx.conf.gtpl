@@ -50,5 +50,9 @@ http {
             # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             # proxy_set_header X-Forwarded-For $proxy_protocol_addr;
         }
+
+        location = /weatherstation/updateweatherstation.php {
+            proxy_pass http://homeassistant.local.hass.io:{{ ha_port }}/weatherstation/updateweatherstation.php;
+        }
     }
 }

@@ -1,5 +1,9 @@
 # WSLink Addon for Home Assistant
 
+# Tiny proxy pass for meteo stations using SSL for sending data to custom servers. 
+
+## Supports **PWS protocol** and **WSLink protocol**
+
 ## Introduction
 
 The WSLink addon for Home Assistant serves as a bridge, enabling SSL communication between your weather station and Home Assistant. This allows seamless data transfer even when Home Assistant isn't configured to accept SSL directly.
