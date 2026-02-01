@@ -7,12 +7,12 @@ on:
 
 jobs:
   build:
-    name: Build add-on on amd64 runner
+    name: Build add-on on amd64 and aarch64 runner
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64, aarch64, i386]
+        arch: [amd64, aarch64]
 
     steps:
       - name: Checkout
