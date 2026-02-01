@@ -1,0 +1,29 @@
+name: Test build (amd64)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build add-on on amd64 runner
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, aarch64, i386]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Test build (amd64)
+        uses: home-assistant/builder@2025.11.0
+        with:
+          args: |
+            --test
+            --${{ matrix.arch }}
+            --target .
+            --docker-hub local
+            --image local/wslink-addon-{arch}
