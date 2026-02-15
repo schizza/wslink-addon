@@ -54,5 +54,16 @@ http {
         location = /weatherstation/updateweatherstation.php {
             proxy_pass http://homeassistant.local.hass.io:{{ ha_port }}/weatherstation/updateweatherstation.php;
         }
+
+        location = /healthz {
+            add_header Content-Type text/plain;
+            return 200 "ok\n";
+        }
+
+        location = /status {
+            default_type application/json;
+            alias /data/status.json;
+            add_header Cache-Control "no-store";
+        }
     }
 }
