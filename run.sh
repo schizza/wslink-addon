@@ -130,6 +130,32 @@ info "Creating nginx configuration file..."
 sed -e "s/{{ ha_port }}/${HA_PORT}/g" \
     /etc/nginx/nginx.conf.gtpl > /etc/nginx/nginx.conf
 
+# Create add-on status JSON (served by nginx at /status)
+info "Creating status.json..."
+STARTED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+cat > /data/status.json <<EOF
+{
+  "ok": true,
+  "addon": "wslink_proxy",
+  "version": "$(bashio::addon.version 2>/dev/null || echo "unknown")",
+  "listen_port": 443,
+  "tls": true,
+  "started_at": "${STARTED_AT}"
+}
+EOF
+
+info "Creating status.internal.json ..."
+cat > /data/status.internal.json <<EOF
+{
+  "ok": true,
+  "addon": "wslink_proxy",
+  "version": "$(bashio::addon.version 2>/dev/null || echo "unknown")",
+  "listen": { "port": 443, "tls": true },
+  "upstream": { "ha_port": ${HA_PORT} },
+  "paths": { "wslink": "/data/upload.php", "wu": "/weatherstation/updateweatherstation.php" }
+}
+EOF
+
 # Start nginx
 bashio::log.info "Running nginx..."
 exec nginx -c /etc/nginx/nginx.conf
