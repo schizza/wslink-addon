@@ -1,12 +1,12 @@
 # WSLink Addon for Home Assistant
 
-# Tiny proxy pass for meteo stations using SSL for sending data to custom servers. 
+## Tiny proxy pass for meteo stations using SSL for sending data to custom servers
 
 ## Supports **PWS protocol** and **WSLink protocol**
 
 ## Introduction
 
-The WSLink addon for Home Assistant serves as a bridge, enabling SSL communication between your weather station and Home Assistant. This allows seamless data transfer even when Home Assistant isn't configured to accept SSL directly.
+The WSLink add-on for Home Assistant serves as a bridge, enabling SSL communication between your weather station and Home Assistant. This allows seamless data transfer even when Home Assistant isn't configured to accept SSL directly.
 
 ## :sparkles: Features
 
@@ -17,21 +17,21 @@ The WSLink addon for Home Assistant serves as a bridge, enabling SSL communicati
 
 ### Via UI
 
-#### You need to add this repository to Addon store
+#### You need to add this repository to Add-ons store
 
 1. Navigate to "Add-ons" in your Home Assistant dashboard.
 2. Click `Add-on store` button
 
 ![README/addonbutton.png](README/addonbutton.png)
 
-3. In top right corner select three dots and `Repositories`
+1. In top right corner select three dots and `Repositories`
 ![dots](README/dots.png)
 
-4. Add link to this repository `https://github.com/schizza/wslink-addon.git`
+2. Add link to this repository `https://github.com/schizza/wslink-addon.git`
 ![addrepo](README/managerepo.png)
 
-5. Refresh your page
-6. Select WSLink Addon and install it.
+3. Refresh your page
+4. Select WSLink Addon and install it.
 
 ### Manual Installation
 
@@ -45,6 +45,7 @@ The WSLink addon for Home Assistant serves as a bridge, enabling SSL communicati
 In `configuration tab` set right settings.
 
 - `Host name`: DNS name for your Home Assistant instance. You can leave `homeassistant.local` if you do not have DNS record for your installation.
+- `HA IP address`: IP address of your Home Assistant installation. This field must be provided as certificate is generated based on this IP address.
 - `HA port`: is unsecured port, where Home Assistant is listening.
 - `cert valid for`: Validity of self-signed certificate in days. Certificate is created within add-on's container.
 - `auto recreate certificate`: Enable this if you want automatic recreation of certificate on settings change or on certificate expiration. _Note: you have to restart this addon to recreate certificate._
@@ -53,7 +54,7 @@ In `configuration tab` set right settings.
 
 1. **Start Add-on**: From the add-ons page, click "Start".
 2. **Check Logs**: Monitor logs for connection status and data flow.
-3. **Set SWS12500 Integration**: Update your SWS12500 integration settings to accept connections on WSLink route.
+3. **Set SWS12500 Integration**: Update your SWS12500 integration settings according to protocol the station is using (PWS/WSLink). _Note: Some stations are configured by WSLink Application, but sends data by older PWS protocol using SSL. If no data appears in your integration, try to switch disable or enable WSLink protocol in integration settings._
 4. **Verify Data**: Ensure weather data appears in Home Assistant sensors.
 
 ## Uninstallation

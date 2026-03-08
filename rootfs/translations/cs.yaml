@@ -1,0 +1,17 @@
+
+configuration:
+  host_name:
+    name: Název hostitele
+    description: DNS jméno zahrnuté do vygenerovaného certifikátu. Můžete ponechat homeassistant.local, pokud nemáte DNS záznam pro vaši instalaci.
+  host_ip:
+    name: IP adresa Home Assistantu
+    description: IP adresa zahrnutá do vygenerovaného certifikátu. Toto pole je povinné.
+  ha_port:
+    name: Port Home Assistantu
+    description: Nešifrovaný port, na kterém Home Assistant naslouchá.
+  cert_valid_for:
+    name: Platnost certifikátu
+    description: Počet dní, po které bude samopodepsaný certifikát platný.
+  auto_recreate_cert:
+    name: Automaticky obnovit certifikát
+    description: Obnoví certifikát, pokud přestane odpovídat konfiguraci nebo se blíží expirace.
