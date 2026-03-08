@@ -106,12 +106,12 @@ function get_external_port() {
   echo "$port"
 }
 
-EXTERNAL_PORT="$(get_external_port)"
-
 check "openssl" true
 check "nginx" true
 check "curl" true
 check "jq" true
+
+EXTERNAL_PORT="$(get_external_port)"
 
 if ! validate_ip "$HOST_IP" || [ -z "$HOST_IP" ]; then
   error "Invalid IP address. IP address is mandatory." true
@@ -126,7 +126,7 @@ fi
 
 # Check if the key.pem file exists
 if [ ! -f /data/ssl/key.pem ]; then
-  info "No SSL certificate found. Creating new one."
+  info "No SSL private key found. Creating new one."
   mkdir -p /data/ssl
   create_new_cert
 fi
@@ -135,7 +135,7 @@ fi
 if [ ! -f /data/ssl/dh.params ]; then
   info "No DH parameters file found. Creating new one."
   mkdir -p /data/ssl
-  create_new_cert
+  openssl dhparam -dsaparam -out "/data/ssl/dh.params" 2048 >/dev/null
 fi
 
 echo -n "Validating certificate ... "
@@ -188,4 +188,3 @@ EOF
 # Start nginx
 bashio::log.info "Running nginx..."
 exec nginx -c /etc/nginx/nginx.conf
-
