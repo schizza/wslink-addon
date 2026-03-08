@@ -9,8 +9,11 @@ RUN chmod a+x /run.sh
 
 RUN \
   apk add --no-cache \
-    nginx
+  nginx
 
 RUN apk add --no-cache openssl
+
+RUN apk add --no-cache curl jq
+
 
 CMD [ "/run.sh" ]
