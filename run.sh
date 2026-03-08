@@ -135,7 +135,7 @@ fi
 if [ ! -f /data/ssl/dh.params ]; then
   info "No DH parameters file found. Creating new one."
   mkdir -p /data/ssl
-  openssl dhparam -dsaparam -out "/data/ssl/dh.params" 2048 >/dev/null
+  openssl dhparam -dsaparam -out "/data/ssl/dh.params" 4096 >/dev/null
 fi
 
 echo -n "Validating certificate ... "
