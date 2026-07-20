@@ -45,15 +45,15 @@ http {
         }
 
         location = /data/upload.php {
-
             set $ha_upstream homeassistant.local.hass.io;
             proxy_connect_timeout 3s;
             proxy_send_timeout    10s;
             proxy_read_timeout    10s;
             proxy_next_upstream   error timeout;
-            proxy_pass http://$ha_upstream:{{ ha_port }}/data/upload.php;
-
-
+            proxy_set_header      X-Forwarded-For $remote_addr;
+            # $is_args$args is required: when proxy_pass contains a variable,
+            # nginx does NOT forward the original query string automatically.
+            proxy_pass http://$ha_upstream:{{ ha_port }}/data/upload.php$is_args$args;
         }
 
         location = /weatherstation/updateweatherstation.php {
@@ -62,7 +62,10 @@ http {
             proxy_send_timeout    10s;
             proxy_read_timeout    10s;
             proxy_next_upstream   error timeout;
-            proxy_pass http://$ha_upstream:{{ ha_port }}/weatherstation/updateweatherstation.php;
+            proxy_set_header      X-Forwarded-For $remote_addr;
+            # $is_args$args is required: when proxy_pass contains a variable,
+            # nginx does NOT forward the original query string automatically.
+            proxy_pass http://$ha_upstream:{{ ha_port }}/weatherstation/updateweatherstation.php$is_args$args;
         }
 
         location = /healthz {
