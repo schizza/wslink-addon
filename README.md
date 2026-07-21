@@ -63,6 +63,29 @@ Before starting the add-on, configure these fields:
 
 Some stations are configured through the WSLink application but still send data using the older PWS protocol over SSL. If data does not appear in Home Assistant, check whether the target integration expects WSLink or PWS and adjust the integration settings accordingly.
 
+### Required Home Assistant configuration (reverse proxy)
+
+Starting with **0.0.8**, the add-on forwards the real client IP to Home Assistant using the `X-Forwarded-For` header. Home Assistant will reject those requests — and log
+
+> A request from a reverse proxy was received from 172.30.33.x, but your HTTP integration is not set-up for reverse proxies
+
+— unless it is explicitly told to trust the add-on as a proxy.
+
+Add the following to your `configuration.yaml` and restart Home Assistant:
+
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.0.0/16   # Home Assistant Supervisor add-on network
+```
+
+Notes:
+
+- `172.30.0.0/16` covers the whole Supervisor internal network, which is where all add-ons live. If you prefer a tighter range, the WSLink add-on's container IP typically falls in `172.30.32.0/23`, but the `/16` above is the safe, forward-compatible choice.
+- If you already have an `http:` block in `configuration.yaml`, merge the two keys into it — do not add a second `http:` section.
+- Without this configuration, uploads through the add-on will fail authentication and — because Home Assistant treats repeated 401s as failed logins — the add-on's internal IP can end up on the HA IP-ban list. If that happens, remove the offending entry from `/config/ip_bans.yaml` and restart Home Assistant.
+
 ## Status endpoints
 
 The add-on exposes two status endpoints:
