@@ -9,6 +9,7 @@ HOST_IP="$(bashio::config 'host_ip')"
 CERT_VALID_FOR="$(bashio::config 'cert_valid_for')"
 AUTO_RECREATE_CERT="$(bashio::config 'auto_recreate_cert')"
 HA_PORT="$(bashio::config 'ha_port')"
+FORWARD_REAL_IP="$(bashio::config 'forward_real_ip')"
 
 RED_COLOR='\033[0;31m'
 GREEN_COLOR='\033[0;32m'
@@ -100,10 +101,24 @@ function get_external_port() {
     jq -r '.data.network["443/tcp"] // empty')"
 
   if [ -z "$port" ] || [ "$port" = "null" ]; then
+    warn "Could not read effective external port from Supervisor API. Falling back to 443." >&2
     port="443"
   fi
 
   echo "$port"
+}
+
+function create_real_ip_headers_conf() {
+  if [ "$FORWARD_REAL_IP" == "true" ]; then
+    info "Forwarding real client IP to Home Assistant."
+    cat >/etc/nginx/real_ip_headers.conf <<EOF
+proxy_set_header X-Forwarded-For \$remote_addr;
+proxy_set_header X-Real-IP \$remote_addr;
+EOF
+  else
+    info "Real client IP forwarding is disabled."
+    : >/etc/nginx/real_ip_headers.conf
+  fi
 }
 
 check "openssl" true
@@ -156,6 +171,7 @@ fi
 
 # Create nginx.conf
 info "Creating nginx configuration file..."
+create_real_ip_headers_conf
 sed -e "s/{{ ha_port }}/${HA_PORT}/g" \
   /etc/nginx/nginx.conf.gtpl >/etc/nginx/nginx.conf
 

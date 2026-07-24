@@ -9,7 +9,7 @@ events {
 http {
     map_hash_bucket_size 128;
 
-    # Docker embedded DNS — lets us re-resolve HA's internal IP without a restart
+    # Docker embedded DNS lets us re-resolve HA's internal IP without a restart.
     resolver 127.0.0.11 ipv6=off valid=10s;
     resolver_timeout 5s;
 
@@ -45,31 +45,31 @@ http {
         }
 
         location = /data/upload.php {
-            set $ha_upstream homeassistant.local.hass.io;
+            set $ha_upstream homeassistant;
             proxy_connect_timeout 3s;
             proxy_send_timeout    10s;
             proxy_read_timeout    10s;
             proxy_next_upstream   error timeout;
-            proxy_set_header      X-Forwarded-For $remote_addr;
+            include /etc/nginx/real_ip_headers.conf;
             # $is_args$args is required: when proxy_pass contains a variable,
             # nginx does NOT forward the original query string automatically.
             proxy_pass http://$ha_upstream:{{ ha_port }}/data/upload.php$is_args$args;
         }
 
         location = /weatherstation/updateweatherstation.php {
-            set $ha_upstream homeassistant.local.hass.io;
+            set $ha_upstream homeassistant;
             proxy_connect_timeout 3s;
             proxy_send_timeout    10s;
             proxy_read_timeout    10s;
             proxy_next_upstream   error timeout;
-            proxy_set_header      X-Forwarded-For $remote_addr;
+            include /etc/nginx/real_ip_headers.conf;
             # $is_args$args is required: when proxy_pass contains a variable,
             # nginx does NOT forward the original query string automatically.
             proxy_pass http://$ha_upstream:{{ ha_port }}/weatherstation/updateweatherstation.php$is_args$args;
         }
 
         location = /healthz {
-            add_header Content-Type text/plain;
+            default_type text/plain;
             return 200 "ok\n";
         }
 
@@ -82,9 +82,6 @@ http {
         location = /status/internal {
           allow 127.0.0.1;
           allow 172.30.0.0/16;
-          allow 172.16.0.0/12;
-          allow 192.168.0.0/16;
-          allow 10.0.0.0/8;
           deny all;
 
           default_type application/json;
