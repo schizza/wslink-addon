@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.0.9
+
+- Make real client IP forwarding optional through `forward_real_ip`.
+  The default is disabled so the add-on works without extra Home
+  Assistant `trusted_proxies` configuration.
+- Keep the recommended trusted proxy setup documented for users who
+  want Home Assistant to see the real weather station IP.
+- Restrict `/status/internal` to loopback and the Supervisor add-on
+  network instead of exposing it to the whole private LAN.
+- Use the current Home Assistant internal hostname (`homeassistant`) as
+  the nginx upstream.
+- Stop relying on legacy `build.yaml` / `BUILD_FROM` for local
+  Supervisor builds.
+
 ## 0.0.8 — Sincere apology + fix for the 0.0.7 breakage
 
 **Please update immediately if you are on 0.0.7.**

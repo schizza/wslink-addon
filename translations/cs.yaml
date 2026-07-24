@@ -14,3 +14,6 @@ configuration:
   auto_recreate_cert:
     name: Automaticky obnovit certifikát
     description: Obnoví certifikát, pokud přestane odpovídat konfiguraci nebo se blíží expirace.
+  forward_real_ip:
+    name: Předávat skutečnou IP klienta
+    description: Pošle IP adresu meteostanice do Home Assistantu pomocí reverse proxy hlaviček. Vyžaduje trusted proxies v Home Assistantu. Před zapnutím se podívejte do README.

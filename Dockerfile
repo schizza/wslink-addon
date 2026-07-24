@@ -1,5 +1,5 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+ARG BUILD_ARCH=amd64
+FROM ghcr.io/home-assistant/${BUILD_ARCH}-base:3.21
 
 # Copy data for add-on
 COPY run.sh /
@@ -9,11 +9,10 @@ RUN chmod a+x /run.sh
 
 RUN \
   apk add --no-cache \
-  nginx
-
-RUN apk add --no-cache openssl
-
-RUN apk add --no-cache curl jq
+    curl \
+    jq \
+    nginx \
+    openssl
 
 
 CMD [ "/run.sh" ]

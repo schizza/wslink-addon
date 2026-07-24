@@ -15,3 +15,6 @@ configuration:
   auto_recreate_cert:
     name: Auto recreate certificate
     description: Recreate the certificate when it no longer matches the configuration or is near expiration.
+  forward_real_ip:
+    name: Forward real client IP
+    description: Send the weather station IP to Home Assistant using reverse proxy headers. Requires trusted proxies in Home Assistant. See README before enabling.

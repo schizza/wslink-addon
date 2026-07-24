@@ -53,6 +53,7 @@ Before starting the add-on, configure these fields:
 - `HA port`: Plain HTTP port where Home Assistant listens internally, usually `8123`.
 - `cert valid for`: Number of days the generated self-signed certificate stays valid.
 - `auto recreate certificate`: Recreates the certificate when it no longer matches the configured host name or IP address, or when it is near expiration. Restart the add-on after changing these settings.
+- `forward real client IP`: Sends the weather station IP to Home Assistant using reverse proxy headers. Leave disabled unless Home Assistant is configured with `trusted_proxies`.
 
 ## Usage
 
@@ -63,15 +64,19 @@ Before starting the add-on, configure these fields:
 
 Some stations are configured through the WSLink application but still send data using the older PWS protocol over SSL. If data does not appear in Home Assistant, check whether the target integration expects WSLink or PWS and adjust the integration settings accordingly.
 
-### Required Home Assistant configuration (reverse proxy)
+### Recommended Home Assistant configuration (trusted proxy)
 
-Starting with **0.0.8**, the add-on forwards the real client IP to Home Assistant using the `X-Forwarded-For` header. Home Assistant will reject those requests — and log
+Home Assistant can either see requests as coming from the add-on container, or it can see the real IP address of the weather station.
+
+By default, the add-on does not forward the real client IP. This works without extra Home Assistant configuration and is the most compatible mode.
+
+The recommended setup is to enable `forward real client IP` in the add-on and allow Home Assistant to trust this add-on as a reverse proxy. With this enabled, Home Assistant receives the real station IP through the `X-Forwarded-For` header. This is better for diagnostics, logging, and IP bans: if credentials are wrong, Home Assistant can identify the station itself instead of treating the add-on container as the client.
+
+If Home Assistant receives `X-Forwarded-For` from the add-on without being configured to trust it, it will reject the request and log:
 
 > A request from a reverse proxy was received from 172.30.33.x, but your HTTP integration is not set-up for reverse proxies
 
-— unless it is explicitly told to trust the add-on as a proxy.
-
-Add the following to your `configuration.yaml` and restart Home Assistant:
+To use real client IP forwarding, first add the following to your Home Assistant `configuration.yaml` and restart Home Assistant:
 
 ```yaml
 http:
@@ -82,9 +87,10 @@ http:
 
 Notes:
 
+- Enable `forward real client IP` in the add-on only after Home Assistant has been restarted with the trusted proxy configuration above.
 - `172.30.0.0/16` covers the whole Supervisor internal network, which is where all add-ons live. If you prefer a tighter range, the WSLink add-on's container IP typically falls in `172.30.32.0/23`, but the `/16` above is the safe, forward-compatible choice.
 - If you already have an `http:` block in `configuration.yaml`, merge the two keys into it — do not add a second `http:` section.
-- Without this configuration, uploads through the add-on will fail authentication and — because Home Assistant treats repeated 401s as failed logins — the add-on's internal IP can end up on the HA IP-ban list. If that happens, remove the offending entry from `/config/ip_bans.yaml` and restart Home Assistant.
+- If uploads fail repeatedly and Home Assistant bans an IP, remove the offending entry from `/config/ip_bans.yaml` and restart Home Assistant.
 
 ## Status endpoints
 

@@ -1,6 +1,6 @@
 name: "WSLink proxy add-on"
 description: "Create a proxy SSL for WSLink support"
-version: "0.0.8"
+version: "0.0.9"
 slug: "wslink_proxy"
 url: "https://github.com/schizza/wslink-addon"
 init: false
@@ -20,10 +20,12 @@ options:
   ha_port: 8123
   cert_valid_for: 65535
   auto_recreate_cert: false
+  forward_real_ip: false
 
 schema:
   host_name: str
   host_ip: str
-  ha_port: int
+  ha_port: port
   cert_valid_for: int
   auto_recreate_cert: bool
+  forward_real_ip: bool
